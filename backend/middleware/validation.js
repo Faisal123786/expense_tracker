@@ -1,4 +1,3 @@
-// Validate transaction data
 const validateTransaction = (req, res, next) => {
   const { title, amount, category, type } = req.body;
   const errors = [];
@@ -23,7 +22,6 @@ const validateTransaction = (req, res, next) => {
     return res.status(400).json({ errors });
   }
   
-  // Add cleaned data to request for controller to use
   req.validatedData = {
     title: title.trim(),
     amount: parseFloat(amount),
