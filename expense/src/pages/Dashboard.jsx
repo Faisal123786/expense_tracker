@@ -27,21 +27,15 @@ const Dashboard = () => {
         <p className="text-gray-400 text-sm sm:text-base">Overview of your financial activity</p>
       </div>
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-        {/* Summary Stats - occupy first column on large screens */}
-        <div className="lg:col-span-1">
-          <SummaryStats 
-            totalIncome={summary.totalIncome}
-            totalExpenses={summary.totalExpenses}
-            balance={summary.balance}
-          />
-        </div>
+      {/* Main Layout: summary cards row on top, full-width category breakdown below */}
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 items-start">
+        <SummaryStats 
+          totalIncome={summary.totalIncome}
+          totalExpenses={summary.totalExpenses}
+          balance={summary.balance}
+        />
 
-        {/* Category Chart - span remaining columns */}
-        <div className="lg:col-span-2">
-          <CategoryChart transactions={transactions} type="doughnut" />
-        </div>
+        <CategoryChart transactions={transactions} type="doughnut" />
       </div>
     </div>
   );

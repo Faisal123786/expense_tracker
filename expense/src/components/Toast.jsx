@@ -18,14 +18,20 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="fixed right-4 bottom-6 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <div key={toast.id} className={`max-w-xs w-full px-4 py-3 rounded-lg shadow-lg text-sm text-white ${
-            toast.type === 'info' ? 'bg-gray-800' : toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-          }`}>
-            {toast.message}
-          </div>
-        ))}
+      <div className="fixed right-4 top-4 z-50 space-y-2">
+        {toasts.map((toast) => {
+          const base = 'max-w-xs w-full px-4 py-3 rounded-lg shadow-lg text-sm text-white';
+          const bgClass = toast.type === 'info'
+            ? 'bg-gray-800'
+            : toast.type === 'success'
+              ? 'bg-emerald-600'
+              : 'bg-red-600';
+          return (
+            <div key={toast.id} className={`${base} ${bgClass}`} role="status" aria-live="polite">
+              {toast.message}
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );
