@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,7 +22,8 @@ ChartJS.register(
   ArcElement
 );
 
-const CategoryChart = ({ transactions, type = 'doughnut' }) => {
+const CategoryChart = ({ transactions, type: initialType = 'doughnut' }) => {
+  const [type, setType] = useState(initialType);
   const expenseTransactions = transactions.filter(t => t.type === 'expense');
   
   // Group expenses by category
@@ -64,13 +65,13 @@ const CategoryChart = ({ transactions, type = 'doughnut' }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: type === 'bar' ? 'top' : window.innerWidth < 768 ? 'bottom' : 'right',
+        position: type === 'bar' ? 'top' : 'right',
         labels: {
           color: '#E5E7EB',
           usePointStyle: true,
-          padding: window.innerWidth < 768 ? 10 : 20,
+          padding: 12,
           font: {
-            size: window.innerWidth < 768 ? 10 : 12,
+            size: 12,
           },
         },
       },
@@ -82,7 +83,9 @@ const CategoryChart = ({ transactions, type = 'doughnut' }) => {
         borderWidth: 1,
         callbacks: {
           label: function(context) {
-            return `${context.label}: $${context.parsed.toFixed(2)}`;
+            // Chart.js v3+ uses different parsed value depending on chart type
+            const value = context.parsed !== undefined ? (context.parsed.y ?? context.parsed) : 0;
+            return `${context.label}: $${Number(value).toFixed(2)}`;
           }
         }
       },
@@ -96,7 +99,7 @@ const CategoryChart = ({ transactions, type = 'doughnut' }) => {
             return '$' + value;
           },
           font: {
-            size: window.innerWidth < 768 ? 10 : 12,
+            size: 12,
           }
         },
         grid: {
@@ -107,7 +110,7 @@ const CategoryChart = ({ transactions, type = 'doughnut' }) => {
         ticks: {
           color: '#9CA3AF',
           font: {
-            size: window.innerWidth < 768 ? 10 : 12,
+            size: 12,
           }
         },
         grid: {
@@ -137,18 +140,18 @@ const CategoryChart = ({ transactions, type = 'doughnut' }) => {
       <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h3 className="text-white text-lg font-semibold">Category Breakdown</h3>
         <div className="flex space-x-1 sm:space-x-2">
-          <button 
-            onClick={() => {}} 
-            className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm ${type === 'doughnut' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-          >
-            Pie
-          </button>
-          <button 
-            onClick={() => {}} 
-            className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm ${type === 'bar' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
-          >
-            Bar
-          </button>
+            <button 
+              onClick={() => setType('doughnut')} 
+              className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm ${type === 'doughnut' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              Pie
+            </button>
+            <button 
+              onClick={() => setType('bar')}
+              className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm ${type === 'bar' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              Bar
+            </button>
         </div>
       </div>
       

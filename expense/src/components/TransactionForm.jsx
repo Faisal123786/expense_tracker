@@ -16,21 +16,29 @@ const TransactionForm = ({ onAddTransaction }) => {
     'shopping'
   ];
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.title && formData.amount && formData.category) {
-      onAddTransaction({
+      const payload = {
         ...formData,
         amount: parseFloat(formData.amount),
         date: new Date().toISOString(),
         id: Date.now().toString()
-      });
-      setFormData({
-        title: '',
-        amount: '',
-        category: '',
-        type: 'expense'
-      });
+      };
+      try {
+        setSubmitting(true);
+        await onAddTransaction(payload);
+        setFormData({
+          title: '',
+          amount: '',
+          category: '',
+          type: 'expense'
+        });
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -143,10 +151,20 @@ const TransactionForm = ({ onAddTransaction }) => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-base sm:text-lg"
+          disabled={submitting}
+          className="w-full flex items-center justify-center space-x-3 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transform transition duration-150 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-purple-200/40"
         >
-          <Plus className="w-5 h-5 inline mr-2" />
-          Add Transaction
+          {submitting ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+              <span className="text-sm font-semibold">Adding...</span>
+            </>
+          ) : (
+            <>
+              <span className="text-sm font-semibold">Add Transaction</span>
+              <Plus className="w-5 h-5 opacity-90" />
+            </>
+          )}
         </button>
       </form>
     </div>

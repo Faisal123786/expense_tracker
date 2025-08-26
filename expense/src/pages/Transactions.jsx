@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TransactionForm from '../components/TransactionForm';
 import TransactionList from '../components/TransactionList';
 import SummaryStats from '../components/SummaryStats';
@@ -17,12 +17,18 @@ const Transactions = () => {
     deleteTransaction,
   } = useTransactionsContext();
 
+  const listRef = useRef(null);
+
   const { addToast } = useToast();
 
   const handleAddTransaction = async (transaction) => {
     try {
       await addTransaction(transaction);
       addToast('Transaction added', 'success');
+      // Scroll to the transaction list so the user sees the newly added item
+      if (listRef.current) {
+        listRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     } catch (err) {
       console.error('Failed to add transaction:', err);
       addToast('Failed to add transaction', 'error');
@@ -70,7 +76,7 @@ const Transactions = () => {
       {/* Cards Section - Below Form */}
       <div className="w-full">
         {/* Center: Transaction List */}
-        <div className="">
+        <div ref={listRef} className="">
           <TransactionList 
             transactions={transactions}
             onDeleteTransaction={handleDeleteTransaction}
